@@ -20,11 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Find and Replace
+      - name: Sync ArgoCD Application
         uses: omegion/argocd-app-actions@master
         with:
-          find: "hello"
-          replace: "world"
+          address: "vault.example.com"
+          token: ${{ secrets.ARGOCD_TOKEN }}
+          appName: "my-example-app"
 ```
 
 ### Inputs
@@ -53,7 +54,7 @@ jobs:
         uses: omegion/argocd-app-actions@master
         with:
           address: "vault.example.com"
-          token: ""
+          token: ${{ secrets.ARGOCD_TOKEN }}
           appName: "my-example-app"
 ```
 
