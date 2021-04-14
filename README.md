@@ -9,27 +9,27 @@ GO CLI Application Template
 </p>
 
 <p align="center">
-    <img src="https://img.shields.io/github/workflow/status/omegion/go-cli-template/Test" alt="Test"></a>
-    <img src="https://coveralls.io/repos/github/omegion/go-cli-template/badge.svg?branch=master" alt="Coverall"></a>
-    <img src="https://goreportcard.com/badge/github.com/omegion/go-cli-template" alt="Report"></a>
-    <a href="http://pkg.go.dev/github.com/omegion/go-cli-template"><img src="https://img.shields.io/badge/pkg.go.dev-doc-blue" alt="Doc"></a>
-    <a href="https://github.com/omegion/go-cli-template/blob/master/LICENSE"><img src="https://img.shields.io/github/license/omegion/go-cli-template" alt="License"></a>
+    <img src="https://img.shields.io/github/workflow/status/omegion/argocd-actions-template/Test" alt="Test"></a>
+    <img src="https://coveralls.io/repos/github/omegion/argocd-actions-template/badge.svg?branch=master" alt="Coverall"></a>
+    <img src="https://goreportcard.com/badge/github.com/omegion/argocd-actions-template" alt="Report"></a>
+    <a href="http://pkg.go.dev/github.com/omegion/argocd-actions-template"><img src="https://img.shields.io/badge/pkg.go.dev-doc-blue" alt="Doc"></a>
+    <a href="https://github.com/omegion/argocd-actions-template/blob/master/LICENSE"><img src="https://img.shields.io/github/license/omegion/argocd-actions-template" alt="License"></a>
 </p>
 
 ```shell
 Go CLI application template for Go projects.
 
 Usage:
-  go-cli [command]
+  argocd-actions [command]
 
 Available Commands:
   help        Help about any command
   version     Print the version/build number
 
 Flags:
-  -h, --help   help for go-cli
+  -h, --help   help for argocd-actions
 
-Use "go-cli [command] --help" for more information about a command.
+Use "argocd-actions [command] --help" for more information about a command.
 ```
 
 ## Requirements

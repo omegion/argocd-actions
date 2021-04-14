@@ -1,0 +1,16 @@
+name: "Go Container Action Template"
+description: "Get started with Go Container actions"
+author: "omegion"
+inputs:
+  argocdAddress:
+    description: "Input to use"
+    required: true
+  argocdToken:
+    description: "Input to use"
+    required: true
+  appName:
+    description: "Input to use"
+    required: true
+runs:
+  using: "docker"
+  image: "Dockerfile"

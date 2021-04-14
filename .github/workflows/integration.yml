@@ -1,0 +1,26 @@
+name: Integration Test
+on: [ push ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Import Secrets
+        id: secrets
+        uses: hashicorp/vault-action@v2.1.2
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: github
+          githubToken: ${{ secrets.GT_VAULT_AUTH_TOKEN }}
+          secrets: |
+            argocd/data/token admin | ARGOCD_TOKEN ;
+
+      - name: Self test
+        id: selftest
+        uses: omegion/argocd-app-actions@master
+        with:
+          argocdAddress: ${{ secrets.ARGOCD_ADDR }}
+          argocdToken: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
+          appName: blog
+

@@ -1,6 +1,6 @@
 export PATH := $(abspath ./vendor/bin):$(PATH)
 
-BASE_PACKAGE_NAME  = github.com/omegion/go-cli
+BASE_PACKAGE_NAME  = github.com/omegion/argocd-actions
 GIT_VERSION = $(shell git describe --tags --always 2> /dev/null || echo 0.0.0)
 LDFLAGS            = -ldflags "-X $(BASE_PACKAGE_NAME)/pkg/info.Version=$(GIT_VERSION)"
 BUFFER            := $(shell mktemp)
@@ -9,10 +9,10 @@ COVER_PROFILE      = $(REPORT_DIR)/coverage.out
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 go build $(LDFLAGS) -installsuffix cgo -o dist/go-cli main.go
+	CGO_ENABLED=0 go build $(LDFLAGS) -installsuffix cgo -o dist/argocd-actions main.go
 
 build-for-container:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -a -installsuffix cgo -o dist/go-cli-linux main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -a -installsuffix cgo -o dist/argocd-actions-linux main.go
 
 .PHONY: lint
 lint:
@@ -42,6 +42,6 @@ cut-tag:
 .PHONY: release
 release: build-for-container
 	@echo "Releasing $(GIT_VERSION)"
-	docker build -t go-cli .
-	docker tag go-cli:latest omegion/go-cli:$(GIT_VERSION)
-	docker push omegion/go-cli:$(GIT_VERSION)
+	docker build -t argocd-actions .
+	docker tag argocd-actions:latest omegion/argocd-actions:$(GIT_VERSION)
+	docker push omegion/argocd-actions:$(GIT_VERSION)

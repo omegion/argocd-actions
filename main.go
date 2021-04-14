@@ -1,29 +1,22 @@
 package main
 
 import (
+	"log"
 	"os"
 
-	"github.com/omegion/go-cli/cmd"
-
-	"github.com/spf13/cobra"
+	"github.com/omegion/argocd-actions/pkg/argocd"
 )
 
-// RootCommand is the main entry point of this application.
-func RootCommand() *cobra.Command {
-	root := &cobra.Command{
-		Use:          "go-cli",
-		Short:        "Go CLI application template",
-		Long:         "Go CLI application template for Go projects.",
-		SilenceUsage: true,
+func main() {
+	options := argocd.APIOptions{
+		Address: os.Getenv("INPUT_ARGOCDADDRESS"),
+		Token:   os.Getenv("INPUT_ARGOCDTOKEN"),
 	}
 
-	root.AddCommand(cmd.Version())
+	api := argocd.NewAPI(options)
 
-	return root
-}
-
-func main() {
-	if err := RootCommand().Execute(); err != nil {
-		os.Exit(1)
+	err := api.Sync(os.Getenv("INPUT_APPNAME"))
+	if err != nil {
+		log.Fatalf("error: %v", err)
 	}
 }
