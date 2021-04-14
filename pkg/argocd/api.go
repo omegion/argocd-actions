@@ -9,16 +9,19 @@ import (
 	argoio "github.com/argoproj/argo-cd/v2/util/io"
 )
 
+// API is struct for argocd api.
 type API struct {
 	client     applicationpkg.ApplicationServiceClient
 	connection io.Closer
 }
 
+// APIOptions is options for API.
 type APIOptions struct {
 	Address string
 	Token   string
 }
 
+// NewAPI creates new API.
 func NewAPI(options APIOptions) API {
 	clientOptions := argocdclient.ClientOptions{
 		ServerAddr: options.Address,
@@ -31,6 +34,7 @@ func NewAPI(options APIOptions) API {
 	return API{client: client, connection: connection}
 }
 
+// Sync syncs given application.
 func (a API) Sync(appName string) error {
 	request := applicationpkg.ApplicationSyncRequest{
 		Name:  &appName,

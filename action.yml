@@ -1,15 +1,15 @@
-name: "Go Container Action Template"
-description: "Get started with Go Container actions"
+name: "ArgoCD Application Sync Action"
+description: "Sync your ArgoCD application from GitHub"
 author: "omegion"
 inputs:
-  argocdAddress:
-    description: "Input to use"
+  address:
+    description: "ArgoCD server address"
     required: true
-  argocdToken:
-    description: "Input to use"
+  token:
+    description: "ArgoCD token"
     required: true
   appName:
-    description: "Input to use"
+    description: "Application name to sync"
     required: true
 runs:
   using: "docker"

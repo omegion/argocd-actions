@@ -20,7 +20,7 @@ jobs:
         id: selftest
         uses: omegion/argocd-app-actions@master
         with:
-          argocdAddress: ${{ secrets.ARGOCD_ADDR }}
-          argocdToken: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
+          address: ${{ secrets.ARGOCD_ADDR }}
+          token: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
           appName: blog
 

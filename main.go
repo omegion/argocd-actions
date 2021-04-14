@@ -9,8 +9,8 @@ import (
 
 func main() {
 	options := argocd.APIOptions{
-		Address: os.Getenv("INPUT_ARGOCDADDRESS"),
-		Token:   os.Getenv("INPUT_ARGOCDTOKEN"),
+		Address: os.Getenv("INPUT_ADDRESS"),
+		Token:   os.Getenv("INPUT_TOKEN"),
 	}
 
 	api := argocd.NewAPI(options)

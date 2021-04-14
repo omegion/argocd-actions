@@ -1,53 +1,67 @@
-<h1 align="center">
-GO CLI Application Template
-</h1>
+# Find and Replace Action
 
-<p align="center">
-  <a href="https://omegion.dev" target="_blank">
-    <img width="180" src="https://cdn.logo.com/hotlink-ok/logo-social-sq.png" alt="logo">
-  </a>
-</p>
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Find%20and%20Replace-blue.svg?colorA=24292e&colorB=0366d6&style=flat&longCache=true&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAM6wAADOsB5dZE0gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAERSURBVCiRhZG/SsMxFEZPfsVJ61jbxaF0cRQRcRJ9hlYn30IHN/+9iquDCOIsblIrOjqKgy5aKoJQj4O3EEtbPwhJbr6Te28CmdSKeqzeqr0YbfVIrTBKakvtOl5dtTkK+v4HfA9PEyBFCY9AGVgCBLaBp1jPAyfAJ/AAdIEG0dNAiyP7+K1qIfMdonZic6+WJoBJvQlvuwDqcXadUuqPA1NKAlexbRTAIMvMOCjTbMwl1LtI/6KWJ5Q6rT6Ht1MA58AX8Apcqqt5r2qhrgAXQC3CZ6i1+KMd9TRu3MvA3aH/fFPnBodb6oe6HM8+lYHrGdRXW8M9bMZtPXUji69lmf5Cmamq7quNLFZXD9Rq7v0Bpc1o/tp0fisAAAAASUVORK5CYII=)](https://github.com/omegion/argocd-app-actions)
+[![Actions Status](https://github.com/omegion/argocd-app-actions/workflows/Build/badge.svg)](https://github.com/omegion/argocd-app-actions/actions)
+[![Actions Status](https://github.com/omegion/argocd-app-actions/workflows/Integration%20Test/badge.svg)](https://github.com/omegion/argocd-app-actions/actions)
 
-<p align="center">
-    <img src="https://img.shields.io/github/workflow/status/omegion/argocd-actions-template/Test" alt="Test"></a>
-    <img src="https://coveralls.io/repos/github/omegion/argocd-actions-template/badge.svg?branch=master" alt="Coverall"></a>
-    <img src="https://goreportcard.com/badge/github.com/omegion/argocd-actions-template" alt="Report"></a>
-    <a href="http://pkg.go.dev/github.com/omegion/argocd-actions-template"><img src="https://img.shields.io/badge/pkg.go.dev-doc-blue" alt="Doc"></a>
-    <a href="https://github.com/omegion/argocd-actions-template/blob/master/LICENSE"><img src="https://img.shields.io/github/license/omegion/argocd-actions-template" alt="License"></a>
-</p>
+This action will sync ArgoCD application.
 
-```shell
-Go CLI application template for Go projects.
+## Usage
 
-Usage:
-  argocd-actions [command]
+### Example workflow
 
-Available Commands:
-  help        Help about any command
-  version     Print the version/build number
+This example replaces syncs ArgoCD application.
 
-Flags:
-  -h, --help   help for argocd-actions
-
-Use "argocd-actions [command] --help" for more information about a command.
+```yaml
+name: My Workflow
+on: [ push, pull_request ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Find and Replace
+        uses: omegion/argocd-app-actions@master
+        with:
+          find: "hello"
+          replace: "world"
 ```
 
-## Requirements
+### Inputs
 
-* Req 1
-* Req 2
+| Input | Description|
+| --- | --- |
+| `address` | ArgoCD server address. |
+| `token` | ArgoCD Token. |
+| `appName` | Application name to sync. |
 
-## What does it do?
+## Examples
 
-A template for Go CLI application.
+### Sync Application
 
-## How to use it
+You can sync ArgoCD application after building an image etc.
 
-* how 1
-* how 2
+```yaml
+name: My Workflow
+on: [ push, pull_request ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Sync ArgoCD Application
+        uses: omegion/argocd-app-actions@master
+        with:
+          address: "vault.example.com"
+          token: ""
+          appName: "my-example-app"
+```
 
-## Improvements to be made
+## Publishing
 
-* 100% test coverage.
-* Better covering for other features.
+To publish a new version of this Action we need to update the Docker image tag in `action.yml` and also create a new
+release on GitHub.
 
+- Work out the next tag version number.
+- Update the Docker image in `action.yml`.
+- Create a new release on GitHub with the same tag.
