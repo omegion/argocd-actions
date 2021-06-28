@@ -1,10 +1,12 @@
 package controller
 
 import (
-	"github.com/golang/mock/gomock"
-	"github.com/omegion/argocd-actions/internal/argocd/mocks"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/omegion/argocd-actions/internal/argocd/mocks"
 )
 
 func TestSign(t *testing.T) {
