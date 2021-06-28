@@ -4,7 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/omegion/argocd-actions/pkg/argocd"
+	"github.com/omegion/argocd-actions/internal/argocd"
+	ctrl "github.com/omegion/argocd-actions/internal/controller"
 )
 
 func main() {
@@ -14,8 +15,9 @@ func main() {
 	}
 
 	api := argocd.NewAPI(options)
+	controller := ctrl.NewController(api)
 
-	err := api.Sync(os.Getenv("INPUT_APPNAME"))
+	err := controller.Sync(os.Getenv("INPUT_APPNAME"))
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}

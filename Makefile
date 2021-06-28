@@ -2,7 +2,7 @@ export PATH := $(abspath ./vendor/bin):$(PATH)
 
 BASE_PACKAGE_NAME  = github.com/omegion/argocd-actions
 GIT_VERSION = $(shell git describe --tags --always 2> /dev/null || echo 0.0.0)
-LDFLAGS            = -ldflags "-X $(BASE_PACKAGE_NAME)/pkg/info.Version=$(GIT_VERSION)"
+LDFLAGS            = -ldflags "-X $(BASE_PACKAGE_NAME)/internal/info.Version=$(GIT_VERSION)"
 BUFFER            := $(shell mktemp)
 REPORT_DIR         = dist/report
 COVER_PROFILE      = $(REPORT_DIR)/coverage.out
@@ -20,7 +20,7 @@ lint:
 	gofmt -l . | tee $(BUFFER)
 	@! test -s $(BUFFER)
 	go vet ./...
-	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.37.1
+	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
 	@golangci-lint --version
 	golangci-lint run
 	go get -u golang.org/x/lint/golint
