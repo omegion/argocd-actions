@@ -1,7 +1,9 @@
 ---
-name: Bug report about: Let us know about a bug!
+name: Bug report
+about: Let us know about a bug!
 title: ''
-labels: 'bug' assignees: ''
+labels: 'bug'
+assignees: ''
 ---
 
 **Describe the bug**
