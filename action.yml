@@ -18,12 +18,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-#    - uses: docker://ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836
-    - id: random-number-generator
-      run: |
-        ls
-        env
+    - uses: docker://ghcr.io/omegion/argocd-actions:${{ GITHUB_REF_NAME }}
+    - name: Get the version
       shell: sh
+      run: |
+        ls /bin
+
 #runs:
 #  using: "docker"
 #  image: "docker://ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836"
