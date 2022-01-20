@@ -18,7 +18,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: docker://ghcr.io/omegion/argocd-actions:v0.1.0-5-g7d9af84
+#    - uses: docker://ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836
     - id: random-number-generator
       run: |
         ls
@@ -26,9 +26,9 @@ runs:
       shell: sh
 #runs:
 #  using: "docker"
-#  image: "docker://ghcr.io/omegion/argocd-actions:v0.1.0-5-g7d9af84"
+#  image: "docker://ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836"
 #  args:
-#    - 'action'
+#    - argocd-actions
 #    - ${{ inputs.action }}
 #    - "--application=${{ inputs.appName }}"
 #    - "--token=${{ inputs.token }}"
