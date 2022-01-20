@@ -1,7 +1,7 @@
 export PATH := $(abspath ./vendor/bin):$(PATH)
 
 BASE_PACKAGE_NAME  = github.com/omegion/argocd-actions
-GIT_VERSION = $(shell git describe --tags --always 2> /dev/null || echo 0.0.0)
+GIT_VERSION 	   = $(shell git describe --tags --always 2> /dev/null || echo 0.0.0)
 LDFLAGS            = -ldflags "-X $(BASE_PACKAGE_NAME)/internal/info.Version=$(GIT_VERSION)"
 BUFFER            := $(shell mktemp)
 REPORT_DIR         = dist/report
@@ -40,8 +40,7 @@ cut-tag:
 	git push origin $(version)
 
 .PHONY: release
-release: build-for-container
+release:
 	@echo "Releasing $(GIT_VERSION)"
-	docker build -t argocd-actions .
-	docker tag argocd-actions:latest omegion/argocd-actions:$(GIT_VERSION)
-	docker push omegion/argocd-actions:$(GIT_VERSION)
+	docker build . --tag ghcr.io/omegion/argocd-actions:$(GIT_VERSION)
+	docker push ghcr.io/omegion/argocd-actions:$(GIT_VERSION)

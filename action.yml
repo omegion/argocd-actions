@@ -1,5 +1,5 @@
-name: "ArgoCD Application Sync Action"
-description: "Sync your ArgoCD application from GitHub"
+name: "ArgoCD Actions"
+description: "Operate your ArgoCD applications from GitHub"
 author: "omegion"
 inputs:
   address:
@@ -8,9 +8,28 @@ inputs:
   token:
     description: "ArgoCD token"
     required: true
+  action:
+    description: "Action name"
+    required: true
   appName:
     description: "Application name to sync"
     required: true
+
 runs:
-  using: "docker"
-  image: "Dockerfile"
+  using: "composite"
+  steps:
+    - name: My first step
+      uses: docker://ghcr.io/omegion/argocd-actions:v0.1.0-5-g7d9af84
+      run: |
+        ls 
+
+#runs:
+#  using: "docker"
+#  image: "docker://ghcr.io/omegion/argocd-actions:v0.1.0-5-g7d9af84"
+#  args:
+#    - 'action'
+#    - ${{ inputs.action }}
+#    - "--application=${{ inputs.appName }}"
+#    - "--token=${{ inputs.token }}"
+#    - "--address=${{ inputs.address }}"
+#    - "--logLevel=debug"
