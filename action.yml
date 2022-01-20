@@ -18,7 +18,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: docker://ghcr.io/omegion/argocd-actions:${{ GITHUB_REF_NAME }}
+    - uses: docker://ghcr.io/omegion/argocd-actions:${{ github.sha }}
     - name: Get the version
       shell: sh
       run: |
