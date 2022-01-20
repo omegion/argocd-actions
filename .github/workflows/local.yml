@@ -2,6 +2,10 @@ name: Local
 
 on:
   workflow_dispatch:
+    inputs:
+      name:
+        description: 'Name'
+        required: false
 
 jobs:
   local_test:
