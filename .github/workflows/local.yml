@@ -2,6 +2,8 @@ name: Local
 
 on:
   push:
+#    branches-ignore:
+#      - '**'
 
 jobs:
   local_test:
