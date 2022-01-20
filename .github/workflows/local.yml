@@ -1,7 +1,7 @@
 name: Local
 
 on:
-  page_build:
+  workflow_dispatch:
 
 jobs:
   local_test:
