@@ -1,0 +1,22 @@
+name: Local
+
+on:
+
+jobs:
+  local_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: ./
+      - name: Self test
+        id: selftest
+        uses: ./
+        with:
+          address: argocd.omegion.dev
+          token: 1
+          action: sync
+          appName: blog
+
+
