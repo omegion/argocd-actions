@@ -1,11 +1,7 @@
 name: Local
 
 on:
-  workflow_dispatch:
-    inputs:
-      name:
-        description: 'Name'
-        required: false
+  push:
 
 jobs:
   local_test:
