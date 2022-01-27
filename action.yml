@@ -24,10 +24,16 @@ inputs:
 #        go mod init
 
 runs:
-  using: 'docker'
-  image: "docker://ghcr.io/omegion/argocd-actions:${{ toJSON(inputs) }}"
-  args:
-    - argocd-actions
+  using: "composite"
+  steps:
+    # Reference a specific commit
+    - uses: docker://ghcr.io/omegion/argocd-actions:${{ toJSON(github) }}"
+
+#runs:
+#  using: 'docker'
+#  image: "docker://ghcr.io/omegion/argocd-actions:${{ toJSON(inputs) }}"
+#  args:
+#    - argocd-actions
 
 
 #  using: "docker"
