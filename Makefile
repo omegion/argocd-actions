@@ -20,7 +20,7 @@ lint:
 	gofmt -l . | tee $(BUFFER)
 	@! test -s $(BUFFER)
 	go vet ./...
-	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.44.0
 	@golangci-lint --version
 	golangci-lint run
 	go get -u golang.org/x/lint/golint
@@ -42,5 +42,5 @@ cut-tag:
 .PHONY: release
 release:
 	@echo "Releasing $(GIT_VERSION)"
-	docker build . --tag ghcr.io/omegion/argocd-actions:$(GIT_VERSION)
+	docker build . --tag ghcr.io/omegion/argocd-actions:$(GIT_VERSION) --tag ghcr.io/omegion/argocd-actions:latest
 	docker push ghcr.io/omegion/argocd-actions:$(GIT_VERSION)
