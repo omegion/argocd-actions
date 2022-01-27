@@ -36,7 +36,7 @@ runs:
     - name: test
       run: |
         env
-        docker run --rm -i ghcr.io/omegion/argocd-actions:${{ env.VERSION }} ls
+        docker run --rm -i ghcr.io/omegion/argocd-actions:${{ github.ref_name }} ls
       shell: sh
 
 #runs:
