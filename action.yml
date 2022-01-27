@@ -24,10 +24,12 @@ inputs:
 #        go mod init
 
 runs:
-  using: "docker"
-  image: "build.Dockerfile"
+  using: 'docker'
+  image: "docker://ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836${{ github.sha }}"
   args:
-    - ls
+    - argocd-actions
+
+
 #  using: "docker"
 #  image: "docker://ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836"
 #  args:
