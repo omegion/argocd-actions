@@ -25,9 +25,9 @@ inputs:
 
 runs:
   using: "docker"
-  image: "Dockerfile"
+  image: "build.Dockerfile"
   args:
-    - argocd-actions
+    - ls
 #  using: "docker"
 #  image: "docker://ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836"
 #  args:

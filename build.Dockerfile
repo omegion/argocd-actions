@@ -21,3 +21,5 @@ LABEL org.opencontainers.image.source="https://github.com/omegion/argocd-actions
 
 COPY --from=builder /app/dist/argocd-actions-linux /bin/argocd-actions
 
+ENTRYPOINT ["argocd-actions"]
+
