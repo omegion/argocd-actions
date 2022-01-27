@@ -28,7 +28,12 @@ runs:
   steps:
     - name: Run argocd-actions CLI
       run: |
-        docker run --rm -i ghcr.io/omegion/argocd-actions:${{ github.actiom_ref }} ls
+        docker run --rm -i ghcr.io/omegion/argocd-actions:i-11 \
+          ${{ inputs.action }} \
+          --application=${{ inputs.appName }} \
+          --token=${{ inputs.token }} \
+          --address=${{ inputs.address }} \
+          --logLevel=debug
       shell: sh
 
 #runs:
