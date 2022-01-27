@@ -43,4 +43,4 @@ cut-tag:
 release:
 	@echo "Releasing $(GIT_VERSION)"
 	docker build . --tag ghcr.io/omegion/argocd-actions:$(GIT_VERSION)
-	docker push ghcr.io/omegion/argocd-actions:$(GIT_VERSION)
+	#docker push ghcr.io/omegion/argocd-actions:$(GIT_VERSION)

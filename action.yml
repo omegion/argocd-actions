@@ -15,22 +15,19 @@ inputs:
     description: "Application name to sync"
     required: true
 
-runs:
-  using: "composite"
-  steps:
-    - name: Generate 0 or 1
-      id: generate_number
-      run: echo "::set-output name=random_number::$(($RANDOM % 2))"
-      shell: sh
-
-    - uses: docker://ghcr.io/omegion/argocd-actions:${{ steps.generate_number.outputs.random_number }}
-
-    - name: Get the version
-      shell: sh
-      run: |
-        ls /bin
-
 #runs:
+#  using: "composite"
+#  steps:
+#    - name: Get the version
+#      shell: sh
+#      run: |
+#        go mod init
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - argocd-actions
 #  using: "docker"
 #  image: "docker://ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836"
 #  args:
