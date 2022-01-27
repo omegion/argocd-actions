@@ -28,6 +28,10 @@ runs:
   steps:
     # Reference a specific commit
     - uses: docker://ghcr.io/omegion/argocd-actions:${{ toJSON(github) }}"
+    - name: test
+      run: >
+        docker run -t ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836
+      shell: sh
 
 #runs:
 #  using: 'docker'
