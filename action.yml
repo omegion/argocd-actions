@@ -26,17 +26,9 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Reference a specific commit
-    - name: Get the version
+    - name: Run argocd-actions CLI
       run: |
-        VERSION=$(echo $GITHUB_REF | cut -d / -f 3)
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
-      shell: sh
-
-    - name: test
-      run: |
-        env
-        docker run --rm -i ghcr.io/omegion/argocd-actions:${{ github.ref_name }} ls
+        docker run --rm -i ghcr.io/omegion/argocd-actions:${{ github.actiom_ref }} ls
       shell: sh
 
 #runs:

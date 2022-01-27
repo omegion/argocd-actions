@@ -15,7 +15,7 @@ jobs:
           path: ./
       - name: Self test
         id: selftest
-        uses: ./
+        uses: ./@i-11
         with:
           address: argocd.omegion.dev
           token: 1
