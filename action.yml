@@ -15,14 +15,6 @@ inputs:
     description: "Application name to sync"
     required: true
 
-#runs:
-#  using: "composite"
-#  steps:
-#    - name: Get the version
-#      shell: sh
-#      run: |
-#        go mod init
-
 runs:
   using: "composite"
   steps:
@@ -35,20 +27,3 @@ runs:
           --address=${{ inputs.address }} \
           --logLevel=debug
       shell: sh
-
-#runs:
-#  using: 'docker'
-#  image: "docker://ghcr.io/omegion/argocd-actions:${{ toJSON(inputs) }}"
-#  args:
-#    - argocd-actions
-
-
-#  using: "docker"
-#  image: "docker://ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836"
-#  args:
-#    - argocd-actions
-#    - ${{ inputs.action }}
-#    - "--application=${{ inputs.appName }}"
-#    - "--token=${{ inputs.token }}"
-#    - "--address=${{ inputs.address }}"
-#    - "--logLevel=debug"

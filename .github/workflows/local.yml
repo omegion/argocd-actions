@@ -17,8 +17,8 @@ jobs:
         id: selftest
         uses: ./
         with:
-          address: argocd.omegion.dev
-          token: 1
+          address: ${{ secrets.ARGOCD_ADDR }}
+          token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
           appName: blog
 

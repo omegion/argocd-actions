@@ -42,11 +42,5 @@ cut-tag:
 .PHONY: release
 release:
 	@echo "Releasing $(GIT_VERSION)"
-	docker build -f build.Dockerfile . --tag ghcr.io/omegion/argocd-actions:$(GIT_VERSION)
+	docker build . --tag ghcr.io/omegion/argocd-actions:$(GIT_VERSION)
 	docker push ghcr.io/omegion/argocd-actions:$(GIT_VERSION)
-
-.PHONY: run-dockerfile
-run-dockerfile:
-	@echo "Releasing $(GIT_VERSION)"
-	docker build -f run.Dockerfile . --build-arg IMAGE_TAG=$(GIT_VERSION)
-	#docker push ghcr.io/omegion/argocd-actions:$(GIT_VERSION)
