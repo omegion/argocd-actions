@@ -29,7 +29,7 @@ runs:
     # Reference a specific commit
     - name: test
       run: >
-        docker run -t ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836
+        docker run -ti ghcr.io/omegion/argocd-actions:v0.1.0-12-gfbee836 ls
       shell: sh
 
 #runs:
