@@ -18,7 +18,13 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: docker://ghcr.io/omegion/argocd-actions:${{ github.sha }}
+    - name: Generate 0 or 1
+      id: generate_number
+      run: echo "::set-output name=random_number::$(($RANDOM % 2))"
+      shell: sh
+
+    - uses: docker://ghcr.io/omegion/argocd-actions:${{ steps.generate_number.outputs.random_number }}
+
     - name: Get the version
       shell: sh
       run: |
