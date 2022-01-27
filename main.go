@@ -3,8 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/omegion/argocd-actions/cmd"
 	cmd2 "github.com/omegion/cobra-commander"
+
+	"github.com/omegion/argocd-actions/cmd"
 )
 
 const (
