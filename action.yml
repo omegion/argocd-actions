@@ -22,7 +22,9 @@ runs:
       run: |
         echo ${{ toJSON(github) }}
         action_path=${{ github.action_path }}
-        docker run --rm -i ghcr.io/omegion/argocd-actions:${{ action_path##*/ }} \
+        echo ${action_path##*/}
+        
+        docker run --rm -i ghcr.io/omegion/argocd-actions:v1 \
           ${{ inputs.action }} \
           --application=${{ inputs.appName }} \
           --token=${{ inputs.token }} \
