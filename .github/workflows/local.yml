@@ -21,5 +21,3 @@ jobs:
           token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
           appName: blog
-
-

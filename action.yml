@@ -14,11 +14,6 @@ inputs:
   appName:
     description: "Application name to sync"
     required: true
-  imageTag:
-    description: "argocd-actions image tag to use"
-    default: ""
-    required: false
-
 
 runs:
   using: "composite"
