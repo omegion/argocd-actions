@@ -24,6 +24,9 @@ runs:
         ref_name=${{ github.ref_name }}
         action_path=${{ github.action_path }}
         action_ref=${action_path##*/}
+        
+        echo $action_ref
+        
         image_tag=$([ -z "$action_ref" ] && echo $ref_name || echo $action_ref)
         
         docker run --rm -i ghcr.io/omegion/argocd-actions:$image_tag \
