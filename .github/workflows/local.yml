@@ -21,6 +21,6 @@ jobs:
           token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
           appName: blog
-          imageTag: latest
+          ref: v0.1.0-35-gb913cab
 
 

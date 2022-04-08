@@ -23,20 +23,8 @@ runs:
   using: "composite"
   steps:
     - name: Run argocd-actions CLI from Github Action REF
-      if: ${{ inputs.imageTag == '' }}
       run: |
         docker run --rm -i ghcr.io/omegion/argocd-actions:${{ github.action_ref }} \
-          ${{ inputs.action }} \
-          --application=${{ inputs.appName }} \
-          --token=${{ inputs.token }} \
-          --address=${{ inputs.address }} \
-          --logLevel=debug
-      shell: sh
-
-    - name: Run argocd-actions CLI from given image tag
-      if: ${{ inputs.imageTag != '' }}
-      run: |
-        docker run --rm -i ghcr.io/omegion/argocd-actions:${{ inputs.imageTag }} \
           ${{ inputs.action }} \
           --application=${{ inputs.appName }} \
           --token=${{ inputs.token }} \
