@@ -15,7 +15,7 @@ jobs:
           path: ./
       - name: Self test
         id: selftest
-        uses: ./
+        uses: ./@v1
         with:
           address: ${{ secrets.ARGOCD_ADDR }}
           token: ${{ secrets.ARGOCD_TOKEN }}
