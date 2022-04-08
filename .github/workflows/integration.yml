@@ -2,8 +2,8 @@ name: Integration Test
 
 on:
 #  push:
-  pull_request:
-
+#  pull_request:
+  repository_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
