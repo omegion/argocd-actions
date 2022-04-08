@@ -26,5 +26,6 @@ jobs:
         with:
           address: ${{ secrets.ARGOCD_ADDR }}
           token: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
+          action: sync
           appName: blog
 
