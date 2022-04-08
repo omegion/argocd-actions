@@ -21,10 +21,12 @@ runs:
     - name: Run argocd-actions CLI from Github Action REF
       run: |
         echo ${{ toJSON(github) }}
+        ref_name=${{ github.ref_name }}
         action_path=${{ github.action_path }}
-        echo ${action_path##*/}
+        action_ref=${action_path##*/}
+        image_tag=$([ -z "$action_ref" ] && echo $ref_name || echo $action_ref)
         
-        docker run --rm -i ghcr.io/omegion/argocd-actions:v1 \
+        docker run --rm -i ghcr.io/omegion/argocd-actions:$image_tag \
           ${{ inputs.action }} \
           --application=${{ inputs.appName }} \
           --token=${{ inputs.token }} \
