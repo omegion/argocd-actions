@@ -1,9 +1,16 @@
 name: Local
 
 on:
-  push:
-#    branches-ignore:
-#      - '**'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action name'
+        required: true
+        default: 'sync'
+      appName:
+        description: 'Application name'
+        required: true
+        default: 'blog'
 
 jobs:
   local_test:
@@ -15,11 +22,11 @@ jobs:
           path: ./
       - name: Self test
         id: selftest
-        uses: ./
+        uses: omegion/argocd-actions@v1
         with:
           address: ${{ secrets.ARGOCD_ADDR }}
           token: ${{ secrets.ARGOCD_TOKEN }}
-          action: sync
-          appName: blog
+          action: ${{ github.event.inputs.action }}
+          appName: ${{ github.event.inputs.appName }}
 
 

@@ -21,10 +21,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Sync ArgoCD Application
-        uses: omegion/argocd-actions@master
+        uses: omegion/argocd-actions@v1
         with:
           address: "vault.example.com"
           token: ${{ secrets.ARGOCD_TOKEN }}
+          action: sync
           appName: "my-example-app"
 ```
 
