@@ -15,9 +15,11 @@ jobs:
           path: ./
       - name: Self test
         id: selftest
-        uses: omegion/argocd-app-actions@v1
+        uses: ./
         with:
           address: ${{ secrets.ARGOCD_ADDR }}
           token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
           appName: blog
+
+
