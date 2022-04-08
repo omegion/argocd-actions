@@ -1,6 +1,11 @@
 package controller
 
-import "github.com/omegion/argocd-actions/internal/argocd"
+import (
+	"github.com/omegion/argocd-actions/internal/argocd"
+)
+
+// Action is action type.
+type Action int
 
 // Controller is main struct of Vault.
 type Controller struct {

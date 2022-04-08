@@ -1,7 +1,7 @@
 export PATH := $(abspath ./vendor/bin):$(PATH)
 
 BASE_PACKAGE_NAME  = github.com/omegion/argocd-actions
-GIT_VERSION = $(shell git describe --tags --always 2> /dev/null || echo 0.0.0)
+GIT_VERSION 	   = $(shell git describe --tags --always 2> /dev/null || echo 0.0.0)
 LDFLAGS            = -ldflags "-X $(BASE_PACKAGE_NAME)/internal/info.Version=$(GIT_VERSION)"
 BUFFER            := $(shell mktemp)
 REPORT_DIR         = dist/report
@@ -20,10 +20,10 @@ lint:
 	gofmt -l . | tee $(BUFFER)
 	@! test -s $(BUFFER)
 	go vet ./...
-	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.44.0
 	@golangci-lint --version
 	golangci-lint run
-	go get -u golang.org/x/lint/golint
+	go install golang.org/x/lint/golint
 	golint -set_exit_status ./...
 
 .PHONY: test
@@ -40,8 +40,7 @@ cut-tag:
 	git push origin $(version)
 
 .PHONY: release
-release: build-for-container
+release:
 	@echo "Releasing $(GIT_VERSION)"
-	docker build -t argocd-actions .
-	docker tag argocd-actions:latest omegion/argocd-actions:$(GIT_VERSION)
-	docker push omegion/argocd-actions:$(GIT_VERSION)
+	docker build . --tag ghcr.io/omegion/argocd-actions:$(GIT_VERSION) --tag ghcr.io/omegion/argocd-actions:latest
+	docker push ghcr.io/omegion/argocd-actions:$(GIT_VERSION)

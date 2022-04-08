@@ -1,0 +1,25 @@
+name: Local
+
+on:
+  push:
+#    branches-ignore:
+#      - '**'
+
+jobs:
+  local_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: ./
+      - name: Self test
+        id: selftest
+        uses: ./
+        with:
+          address: ${{ secrets.ARGOCD_ADDR }}
+          token: ${{ secrets.ARGOCD_TOKEN }}
+          action: sync
+          appName: blog
+
+

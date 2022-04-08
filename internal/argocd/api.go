@@ -29,7 +29,7 @@ type APIOptions struct {
 }
 
 // NewAPI creates new API.
-func NewAPI(options APIOptions) API {
+func NewAPI(options *APIOptions) API {
 	clientOptions := argocdclient.ClientOptions{
 		ServerAddr: options.Address,
 		AuthToken:  options.Token,

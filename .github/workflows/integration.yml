@@ -1,5 +1,9 @@
 name: Integration Test
-on: [ push ]
+
+on:
+#  push:
+#  pull_request:
+  repository_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,9 +22,10 @@ jobs:
 
       - name: Self test
         id: selftest
-        uses: omegion/argocd-app-actions@master
+        uses: omegion/argocd-actions@master
         with:
           address: ${{ secrets.ARGOCD_ADDR }}
           token: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
+          action: sync
           appName: blog
 

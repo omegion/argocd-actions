@@ -1,5 +1,5 @@
-ARG GO_VERSION=1.16-alpine3.12
-ARG FROM_IMAGE=alpine:3.12
+ARG GO_VERSION=1.17-alpine3.14
+ARG FROM_IMAGE=alpine:3.14
 
 FROM golang:${GO_VERSION} AS builder
 
@@ -17,6 +17,9 @@ RUN make build-for-container
 
 FROM ${FROM_IMAGE}
 
+LABEL org.opencontainers.image.source="https://github.com/omegion/argocd-actions"
+
 COPY --from=builder /app/dist/argocd-actions-linux /bin/argocd-actions
 
 ENTRYPOINT ["argocd-actions"]
+
