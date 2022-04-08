@@ -1,10 +1,7 @@
 name: Test
 
 on:
-#  push:
-#  pull_request:
-  repository_dispatch:
-
+  pull_request:
 
 jobs:
   test:
@@ -55,8 +52,8 @@ jobs:
       - name: go vet
         run: go vet ./...
 
-      - name: go lint
-        run: golint -set_exit_status ./...
+#      - name: go lint
+#        run: golint -set_exit_status ./...
 
   golangci:
     name: golangci lint check
