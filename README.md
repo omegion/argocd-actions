@@ -36,6 +36,7 @@ jobs:
 | `address` | ArgoCD server address. |
 | `token` | ArgoCD Token. |
 | `appName` | Application name to sync. |
+| `action` | ArgoCD action to perform
 
 ## Examples
 
@@ -57,6 +58,7 @@ jobs:
           address: "vault.example.com"
           token: ${{ secrets.ARGOCD_TOKEN }}
           appName: "my-example-app"
+          action: sync
 ```
 
 ## Publishing
