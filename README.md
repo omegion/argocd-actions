@@ -23,7 +23,7 @@ jobs:
       - name: Sync ArgoCD Application
         uses: omegion/argocd-actions@v1
         with:
-          address: "vault.example.com"
+          address: "argocd.example.com"
           token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
           appName: "my-example-app"
@@ -31,11 +31,12 @@ jobs:
 
 ### Inputs
 
-| Input | Description|
-| --- | --- |
-| `address` | ArgoCD server address. |
-| `token` | ArgoCD Token. |
-| `appName` | Application name to sync. |
+| Input     | Description                            |
+|-----------|----------------------------------------|
+| `address` | ArgoCD server address.                 |
+| `token`   | ArgoCD Token.                          |
+| `action`  | ArgoCD Action i.e. sync.               |
+| `appName` | Application name to execute action on. |
 
 ## Examples
 
@@ -56,6 +57,7 @@ jobs:
         with:
           address: "vault.example.com"
           token: ${{ secrets.ARGOCD_TOKEN }}
+          action: sync
           appName: "my-example-app"
 ```
 
