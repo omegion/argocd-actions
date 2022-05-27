@@ -6,13 +6,13 @@ LDFLAGS            = -ldflags "-buildid=$(GIT_VERSION)"
 BUFFER            := $(shell mktemp)
 REPORT_DIR         = dist/report
 COVER_PROFILE      = $(REPORT_DIR)/coverage.out
+TARGETOS		   = darwin
+TARGETARCH		   = amd64
+BINARY_NAME        = dist/argocd-actions
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 go build $(LDFLAGS) -installsuffix cgo -o dist/argocd-actions main.go
-
-build-for-container:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -a -installsuffix cgo -o dist/argocd-actions-linux main.go
+	CGO_ENABLED=0 GOOS="$(TARGETOS)" GOARCH="$(TARGETARCH)" go build $(LDFLAGS) -a -installsuffix cgo -o $(BINARY_NAME) main.go
 
 .PHONY: lint
 lint:
