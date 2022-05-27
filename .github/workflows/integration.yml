@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       - name: Import Secrets
         id: secrets
@@ -22,7 +22,7 @@ jobs:
 
       - name: Self test
         id: selftest
-        uses: ./.github/actions/argocd-action
+        uses: ./
         with:
           address: ${{ secrets.ARGOCD_ADDR }}
           token: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
