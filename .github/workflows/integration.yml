@@ -27,6 +27,6 @@ jobs:
           address: ${{ secrets.ARGOCD_ADDR }}
           token: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
           action: sync
-          appName: blog
+          appName: argocd-apps
           image: latest
 
