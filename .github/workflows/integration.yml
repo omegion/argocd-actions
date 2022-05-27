@@ -28,4 +28,5 @@ jobs:
           token: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
           action: sync
           appName: blog
+          image: latest
 
