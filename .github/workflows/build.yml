@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Import Secrets
         id: secrets
-        uses: hashicorp/vault-action@v2.4.0
+        uses: hashicorp/vault-action@v2.4.1
         with:
           url: ${{ secrets.VAULT_ADDR }}
           method: github
@@ -28,13 +28,13 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Login to GitHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -42,7 +42,7 @@ jobs:
 
       - name: Build and push to GitHub
         id: github_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./
           file: ./Dockerfile
@@ -61,18 +61,20 @@ jobs:
           - 'darwin/arm64'
           - 'linux/amd64'
           - 'linux/arm64'
+          - 'windows/amd64'
+          - 'windows/arm64'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Get the version
         run: |
           VERSION=$(echo $GITHUB_REF | cut -d / -f 3)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
-          go-version: '1.17'
+          go-version: '1.18'
       - name: Get OS and arch info
         run: |
           GOOSARCH=${{matrix.goosarch}}
@@ -96,12 +98,12 @@ jobs:
           curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v3.10.0/gomplate_linux-amd64
           chmod 755 /usr/local/bin/gomplate
           
-          gomplate --file .github/RELEASE_TEMPLATE.md --out .github/RELEASE-NOTES.md
+          gomplate --file .github/RELEASE_TEMPLATE.md --out .github/RELEASE_NOTES.md
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
         with:
           name: Release ${{env.VERSION}}
-          body_path: ".github/RELEASE-NOTES.md"
+          body_path: ".github/RELEASE_NOTES.md"
           draft: false
           files: ${{env.BINARY_NAME}}
         env:
