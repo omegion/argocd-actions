@@ -1,14 +1,13 @@
 name: Integration Test
 
 on:
-#  push:
-#  pull_request:
-  repository_dispatch:
+  push:
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       - name: Import Secrets
         id: secrets
@@ -22,10 +21,11 @@ jobs:
 
       - name: Self test
         id: selftest
-        uses: omegion/argocd-actions@master
+        uses: ./
         with:
           address: ${{ secrets.ARGOCD_ADDR }}
           token: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
           action: sync
-          appName: blog
+          appName: argocd-apps
+          image: latest
 
