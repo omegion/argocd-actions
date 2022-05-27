@@ -1,6 +1,9 @@
 name: "ArgoCD Actions"
 description: "Operate your ArgoCD applications from GitHub"
 author: "omegion"
+branding:
+  icon: activity
+  color: yellow
 inputs:
   address:
     description: "ArgoCD server address"
