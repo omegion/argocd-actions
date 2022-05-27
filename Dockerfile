@@ -1,7 +1,13 @@
-ARG GO_VERSION=1.17-alpine3.14
-ARG FROM_IMAGE=alpine:3.14
+ARG GO_VERSION=1.18-alpine3.15
+ARG FROM_IMAGE=alpine:3.15
 
-FROM golang:${GO_VERSION} AS builder
+FROM --platform=${BUILDPLATFORM} golang:${GO_VERSION} AS builder
+
+ARG TARGETOS
+ARG TARGETARCH
+ARG VERSION
+
+LABEL org.opencontainers.image.source="https://github.com/omegion/argocd-actions"
 
 WORKDIR /app
 
@@ -13,13 +19,10 @@ RUN apk update && \
   rm -rf /var/cache/apk/* && \
   rm -rf /var/tmp/*
 
-RUN make build-for-container
+RUN make build TARGETOS=$TARGETOS TARGETARCH=$TARGETARCH VERSION=$VERSION
 
 FROM ${FROM_IMAGE}
 
-LABEL org.opencontainers.image.source="https://github.com/omegion/argocd-actions"
-
-COPY --from=builder /app/dist/argocd-actions-linux /bin/argocd-actions
+COPY --from=builder /app/dist/argocd-actions /bin/argocd-actions
 
 ENTRYPOINT ["argocd-actions"]
-
