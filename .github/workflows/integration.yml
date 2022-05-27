@@ -1,9 +1,9 @@
 name: Integration Test
 
 on:
-#  push:
+  push:
 #  pull_request:
-  repository_dispatch:
+#  repository_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
