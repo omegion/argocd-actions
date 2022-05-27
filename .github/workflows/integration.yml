@@ -22,7 +22,7 @@ jobs:
 
       - name: Self test
         id: selftest
-        uses: omegion/argocd-actions@master
+        uses: ./.github/actions/argocd-action
         with:
           address: ${{ secrets.ARGOCD_ADDR }}
           token: ${{ steps.secrets.outputs.ARGOCD_TOKEN }}
