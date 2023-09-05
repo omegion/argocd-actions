@@ -17,6 +17,7 @@ func Sync() *cobra.Command {
 			address, _ := cmd.Flags().GetString("address")
 			token, _ := cmd.Flags().GetString("token")
 			application, _ := cmd.Flags().GetString("application")
+			labels, _ := cmd.Flags().GetString("labels")  // Capture the labels from the flag
 
 			api := argocd.NewAPI(&argocd.APIOptions{
 				Address: address,
@@ -25,7 +26,14 @@ func Sync() *cobra.Command {
 
 			controller := ctrl.NewController(api)
 
-			err := controller.Sync(application)
+			// Conditionally sync based on labels or application name
+			var err error
+			if labels != "" {
+				err = controller.SyncWithLabels(labels)  // This function needs to be implemented
+			} else {
+				err = controller.Sync(application)
+			}
+
 			if err != nil {
 				return err
 			}
@@ -37,6 +45,7 @@ func Sync() *cobra.Command {
 	}
 
 	cmd.Flags().String("application", "", "ArgoCD application name")
+	cmd.Flags().String("labels", "", "Labels to sync the ArgoCD app with")  // Add the new flag for labels
 
 	if err := cmd.MarkFlagRequired("application"); err != nil {
 		log.Fatalf("Lethal damage: %s\n\n", err)

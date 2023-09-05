@@ -38,6 +38,8 @@ jobs:
 | `action`  | ArgoCD Action i.e. sync.               |
 | `appName` | Application name to execute action on. |
 
+**Optional** Labels to sync the ArgoCD app with. If provided, the action will sync the app based on these labels, instead of the app name.
+
 ## Examples
 
 ### Sync Application
@@ -59,6 +61,24 @@ jobs:
           token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
           appName: "my-example-app"
+```
+
+### Example syncing with labels
+```yaml
+name: My Workflow
+on: [ push, pull_request ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Sync ArgoCD Application
+        uses: omegion/argocd-actions@master
+        with:
+          address: "vault.example.com"
+          token: ${{ secrets.ARGOCD_TOKEN }}
+          action: sync
+          labels: "env=production,team=myteam" # Replace with your label key-value pairs
 ```
 
 ## Publishing

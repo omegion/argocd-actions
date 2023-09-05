@@ -21,3 +21,8 @@ func NewController(api argocd.Interface) *Controller {
 func (c Controller) Sync(appName string) error {
 	return c.API.Sync(appName)
 }
+
+// SyncWithLabels syncs apps based on provided labels.
+func (c Controller) SyncWithLabels(labels string) error {
+	return c.API.SyncWithLabels(labels)  // We are assuming the API interface has a SyncWithLabels method
+}

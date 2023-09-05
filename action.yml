@@ -21,6 +21,9 @@ inputs:
     description: "Image tag for the binary"
     required: false
     default: "latest"
+  labels:
+    description: 'Labels to sync the ArgoCD app'
+    required: false
 
 runs:
   using: "composite"
