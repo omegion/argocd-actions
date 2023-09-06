@@ -50,17 +50,12 @@ func Sync() *cobra.Command {
 					log.Infof("Application %s synced using labels", app.Name)
 				}
 			}
-		
+			log.Infof("ArgoCD did not trigger sync! %s", application)
 			return nil
 		},
 	}
 
 	cmd.Flags().String("application", "", "ArgoCD application name")
 	cmd.Flags().String("labels", "", "Labels to sync the ArgoCD app with")  // Add the new flag for labels
-
-	if err := cmd.MarkFlagRequired("application"); err != nil {
-		log.Fatalf("Lethal damage: %s\n\n", err)
-	}
-
 	return cmd
 }
