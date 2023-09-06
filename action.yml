@@ -14,7 +14,7 @@ inputs:
   action:
     description: "Action name"
     required: true
-  appName:
+  application: #appName
     description: "Application name to sync"
     required: false
   image:
