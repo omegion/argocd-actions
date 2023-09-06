@@ -16,7 +16,7 @@ inputs:
     required: true
   appName:
     description: "Application name to sync"
-    required: true
+    required: false
   image:
     description: "Image tag for the binary"
     required: false
