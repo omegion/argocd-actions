@@ -12,8 +12,6 @@ import (
 	argoio "github.com/argoproj/argo-cd/v2/util/io"
 )
 
-//nolint:lll // go generate is ugly.
-//go:generate mockgen -destination=mocks/api_mock.go -package=mocks github.com/omegion/argocd-actions/internal/argocd Interface
 // Interface is an interface for API.
 type Interface interface {
 	Sync(appName string) error

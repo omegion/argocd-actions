@@ -5,7 +5,7 @@ import (
 
 	cmd2 "github.com/omegion/cobra-commander"
 
-	"github.com/omegion/argocd-actions/cmd"
+	"github.com/cheelim1/argocd-actions/cmd"
 )
 
 const (

@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/omegion/argocd-actions/internal/argocd"
+	"github.com/cheelim1/argocd-actions/internal/argocd"
 )
 
 // Action is action type.

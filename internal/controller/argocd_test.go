@@ -6,7 +6,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/omegion/argocd-actions/internal/argocd/mocks"
+	"github.com/cheelim1/argocd-actions/internal/argocd/mocks"
 )
 
 func TestSign(t *testing.T) {

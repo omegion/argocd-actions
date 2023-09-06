@@ -1,4 +1,4 @@
-module github.com/omegion/argocd-actions
+module github.com/cheelim1/argocd-actions
 
 go 1.18
 

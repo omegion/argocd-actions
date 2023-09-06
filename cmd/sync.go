@@ -4,8 +4,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/omegion/argocd-actions/internal/argocd"
-	ctrl "github.com/omegion/argocd-actions/internal/controller"
+	"github.com/cheelim1/argocd-actions/internal/argocd"
+	ctrl "github.com/cheelim1/argocd-actions/internal/controller"
 )
 
 // Sync syncs given application.

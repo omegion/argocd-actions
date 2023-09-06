@@ -1,9 +1,9 @@
 name: "ArgoCD Actions"
 description: "Operate your ArgoCD applications from GitHub"
-author: "omegion"
+author: "cheelim1"
 branding:
-  icon: activity
-  color: yellow
+  icon: terminal
+  color: 'gray-dark'
 inputs:
   address:
     description: "ArgoCD server address"
@@ -26,14 +26,5 @@ inputs:
     required: false
 
 runs:
-  using: "composite"
-  steps:
-    - name: Run argocd-actions CLI from the image for GH image registry
-      run: |
-        docker run --rm -i ghcr.io/omegion/argocd-actions:${{ inputs.image }} \
-          ${{ inputs.action }} \
-          --application=${{ inputs.appName }} \
-          --token=${{ inputs.token }} \
-          --address=${{ inputs.address }} \
-          --logLevel=debug
-      shell: sh
+  using: 'docker'
+  image: 'Dockerfile'
