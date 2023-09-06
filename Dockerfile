@@ -7,7 +7,7 @@ ARG TARGETOS
 ARG TARGETARCH
 ARG VERSION
 
-LABEL org.opencontainers.image.source="https://github.com/omegion/argocd-actions"
+LABEL org.opencontainers.image.source="https://github.com/cheelim1/argocd-actions"
 
 WORKDIR /app
 
