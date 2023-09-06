@@ -40,6 +40,7 @@ func Sync() *cobra.Command {
 				}
 				log.Infof("Application %s synced", application)
 			} else if labels != "" {
+				log.Infof("To sync app %s based on labels %s", application, labels)
 				matchedApps, err := controller.SyncWithLabels(labels)
 				if err != nil {
 					return err

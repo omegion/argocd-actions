@@ -95,25 +95,61 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
     return syncedApps, nil
 }
 
-// matchesLabels checks if an application has the specified labels.
 func matchesLabels(app *v1alpha1.Application, labelsStr string) bool {
-    // Split the string into individual label key-value pairs.
     pairs := strings.Split(labelsStr, ",")
-
     appLabels := app.ObjectMeta.Labels
 
     for _, pair := range pairs {
-        keyValue := strings.Split(pair, "=")
-        if len(keyValue) != 2 {
-          	// Malformed label string; skip this pair and continue.
-            continue
-        }
-        key, value := keyValue[0], keyValue[1]
-
-        appValue, exists := appLabels[key]
-        if !exists || appValue != value {
-            return false
+        // Handle negative matches
+        if strings.Contains(pair, "!=") {
+            keyValue := strings.Split(pair, "!=")
+            if len(keyValue) != 2 {
+                // Malformed label string
+                continue
+            }
+            key, value := keyValue[0], keyValue[1]
+            if appLabels[key] == value {
+                return false
+            }
+        } else if strings.Contains(pair, "=") {
+            keyValue := strings.Split(pair, "=")
+            if len(keyValue) != 2 {
+                // Malformed label string
+                continue
+            }
+            key, value := keyValue[0], keyValue[1]
+            if appLabels[key] != value {
+                return false
+            }
+        } else if strings.Contains(pair, "notin") {
+            parts := strings.Split(pair, "notin")
+            if len(parts) != 2 {
+                continue // or handle error
+            }
+            
+            key := strings.TrimSpace(parts[0])
+            valueStr := strings.TrimSpace(parts[1])
+            
+            // Trim brackets and split by comma
+            values := strings.Split(strings.Trim(valueStr, "()"), ",")
+            
+            for _, v := range values {
+                if appLabels[key] == strings.TrimSpace(v) {
+                    return false
+                }
+            }
+        } else if strings.HasPrefix(pair, "!") {
+            key := strings.TrimPrefix(pair, "!")
+            if _, exists := appLabels[key]; exists {
+                return false
+            }
+        } else {
+            // Existence checks
+            if _, exists := appLabels[pair]; !exists {
+                return false
+            }
         }
     }
     return true
 }
+
