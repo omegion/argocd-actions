@@ -98,19 +98,17 @@ jobs:
       - name: Release Notes
         run: |
           export VERSION=${{env.VERSION}}
-
           git log $(git describe HEAD~ --tags --abbrev=0)..HEAD --pretty='format:* %h %s%n  * %an <%ae>' --no-merges >> .github/RELEASE_TEMPLATE.md
-          
           curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v3.10.0/gomplate_linux-amd64
           chmod 755 /usr/local/bin/gomplate
           
           gomplate --file .github/RELEASE_TEMPLATE.md --out .github/RELEASE_NOTES.md
-      - name: Release with Notes
-        uses: softprops/action-gh-release@v1
-        with:
-          name: Release ${{env.VERSION}}
-          body_path: ".github/RELEASE_NOTES.md"
-          draft: false
-          files: ${{env.BINARY_NAME}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+      # - name: Release with Notes
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     name: Release ${{env.VERSION}}
+      #     body_path: ".github/RELEASE_NOTES.md"
+      #     draft: false
+      #     files: ${{env.BINARY_NAME}}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
