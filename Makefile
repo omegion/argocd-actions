@@ -2,17 +2,17 @@ export PATH := $(abspath ./vendor/bin):$(PATH)
 
 BASE_PACKAGE_NAME  = github.com/cheelim1/argocd-actions
 GIT_VERSION 	   = $(shell git describe --tags --always 2> /dev/null || echo 0.0.0)
-LDFLAGS            = -ldflags "-X $(BASE_PACKAGE_NAME)/pkg/info.Version=$(GIT_VERSION)"
+LDFLAGS            = -ldflags "-buildid=$(GIT_VERSION)"
 BUFFER            := $(shell mktemp)
 REPORT_DIR         = dist/report
 COVER_PROFILE      = $(REPORT_DIR)/coverage.out
+TARGETOS		   = darwin
+TARGETARCH		   = amd64
+BINARY_NAME        = dist/argocd-actions
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 go build $(LDFLAGS) -installsuffix cgo -o dist/argocd-actions main.go
-
-build-for-container:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -a -installsuffix cgo -o dist/argocd-actions-linux main.go
+	CGO_ENABLED=0 GOOS="$(TARGETOS)" GOARCH="$(TARGETARCH)" go build $(LDFLAGS) -a -installsuffix cgo -o $(BINARY_NAME) main.go
 
 .PHONY: lint
 lint:
@@ -22,11 +22,13 @@ lint:
 	go vet ./...
 
 	# golangci-lint
-	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.37.1
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2
 	@golangci-lint --version
 	golangci-lint run
-	go get -u golang.org/x/lint/golint
-	golint -set_exit_status ./...
+
+	# Statuscheck
+	go install honnef.co/go/tools/cmd/staticcheck@2022.1
+	staticcheck ./...
 
 .PHONY: test
 test:
@@ -40,10 +42,3 @@ cut-tag:
 	@echo "Cutting $(version)"
 	git tag $(version)
 	git push origin $(version)
-
-.PHONY: release
-release: build-for-container
-	@echo "Releasing $(GIT_VERSION)"
-	docker build -t argocd-actions .
-	docker tag argocd-actions:latest cheelim1/argocd-actions:$(GIT_VERSION)
-	docker push cheelim1/argocd-actions:$(GIT_VERSION)
