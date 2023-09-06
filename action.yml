@@ -1,5 +1,5 @@
-name: "ArgoCD Actions"
-description: "Operate your ArgoCD applications from GitHub"
+name: "ArgoCD Sync Actions +"
+description: "Sync ArgoCD apps based on app name or labels"
 author: "cheelim1"
 branding:
   icon: terminal

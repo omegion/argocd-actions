@@ -1,5 +1,5 @@
 # Use the official Golang image from the DockerHub
-FROM golang:1.17 as builder
+FROM golang:1.18 as builder
 
 # Install git, required for fetching Go dependencies
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*

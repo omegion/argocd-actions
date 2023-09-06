@@ -26,7 +26,7 @@ jobs:
           address: "argocd.example.com"
           token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
-          appName: "my-example-app"
+          application: "my-example-app"
 ```
 
 ### Inputs
@@ -36,7 +36,7 @@ jobs:
 | `address` | ArgoCD server address.                 |
 | `token`   | ArgoCD Token.                          |
 | `action`  | ArgoCD Action i.e. sync.               |
-| `appName` | Application name to execute action on. |
+| `application` | Application name to execute action on. |
 
 **Optional** Labels to sync the ArgoCD app with. If provided, the action will sync the app based on these labels, instead of the app name.
 
@@ -60,7 +60,7 @@ jobs:
           address: "vault.example.com"
           token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
-          appName: "my-example-app"
+          application: "my-example-app"
 ```
 
 ### Example syncing with labels
