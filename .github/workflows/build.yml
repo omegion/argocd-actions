@@ -10,6 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  IMAGE_REPOSITORY: argocd-action
 
 jobs:
   build:
