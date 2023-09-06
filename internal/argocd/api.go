@@ -9,6 +9,7 @@ import (
 	argocdclient "github.com/argoproj/argo-cd/v2/pkg/apiclient"
 	applicationpkg "github.com/argoproj/argo-cd/v2/pkg/apiclient/application"
 	"github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
+	"google.golang.org/appengine/log"
 
 	argoio "github.com/argoproj/argo-cd/v2/util/io"
 )
@@ -74,14 +75,23 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
 
     // 2. Iterate through each application, check labels, and sync if it matches
     for _, app := range listResponse.Items {
+        ctx := context.Background()
+        log.Infof(ctx, "Fetched app: %s with labels: %v", app.Name, app.ObjectMeta.Labels)
+
         if matchesLabels(&app, labels) {
             err := a.Sync(app.Name)
             if err != nil {
                 syncErrors = append(syncErrors, fmt.Sprintf("Error syncing %s: %v", app.Name, err))
                 continue
             }
+            log.Infof(ctx, "Synced app %s based on labels", app.Name)
             syncedApps = append(syncedApps, &app)
         }
+    }
+
+    // Check if no applications were synced based on labels
+    if len(syncedApps) == 0 {
+        return nil, fmt.Errorf("No applications found with matching labels: %s", labels)
     }
 
     // Close connection
