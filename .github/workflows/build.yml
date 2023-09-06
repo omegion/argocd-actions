@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - master
   release:
     types:
       - published
@@ -23,7 +23,7 @@ jobs:
 
       # Compile Go code to create the binary
       - name: Compile Go code
-        run: GOOS=linux GOARCH=amd64 go build -o argocd-sync main.go
+        run: GOOS=linux GOARCH=amd64 go build -o argocd-sync master.go
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -50,7 +50,7 @@ jobs:
         run: |
           echo "image-tag=$(echo ${{ github.sha }} | cut -c 1-7 )" >> $GITHUB_ENV
 
-      - if: github.ref == 'refs/heads/main'
+      - if: github.ref == 'refs/heads/master'
         name: Build and push to GitHub
         uses: docker/build-push-action@v3
         with:
