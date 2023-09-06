@@ -38,7 +38,6 @@ func Sync() *cobra.Command {
 				if err != nil {
 					return err
 				}
-		
 				log.Infof("Application %s synced", application)
 			} else if labels != "" {
 				matchedApps, err := controller.SyncWithLabels(labels)
@@ -50,6 +49,7 @@ func Sync() *cobra.Command {
 					log.Infof("Application %s synced using labels", app.Name)
 				}
 			}
+			log.Infof("labels passed in: %s", labels)
 			log.Infof("ArgoCD did not trigger sync! %s", application)
 			return nil
 		},
