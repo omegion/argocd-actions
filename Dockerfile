@@ -1,18 +1,28 @@
-# Use the official Golang image from the DockerHub
-FROM golang:1.18 as builder
+ARG GO_VERSION=1.18-alpine3.15
+ARG FROM_IMAGE=alpine:3.15
 
-# Install git, required for fetching Go dependencies
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+FROM --platform=${BUILDPLATFORM} golang:${GO_VERSION} AS builder
 
-# Set the Current Working Directory inside the container
+ARG TARGETOS
+ARG TARGETARCH
+ARG VERSION
+
+LABEL org.opencontainers.image.source="https://github.com/omegion/argocd-actions"
+
 WORKDIR /app
-COPY . .
 
-# Download all Go dependencies
-RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o argocd-sync
+COPY ./ /app
 
-FROM alpine:3.14
-COPY --from=builder /app/argocd-sync /argocd-sync
+RUN apk update && \
+  apk add ca-certificates gettext git make curl unzip && \
+  rm -rf /tmp/* && \
+  rm -rf /var/cache/apk/* && \
+  rm -rf /var/tmp/*
 
-ENTRYPOINT ["/argocd-sync"]
+RUN make build TARGETOS=$TARGETOS TARGETARCH=$TARGETARCH VERSION=$VERSION
+
+FROM ${FROM_IMAGE}
+
+COPY --from=builder /app/dist/argocd-actions /bin/argocd-actions
+
+ENTRYPOINT ["argocd-actions"]
