@@ -10,7 +10,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_REPOSITORY: argocd-action
 
 jobs:
   build:
@@ -40,13 +39,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}
-
       - id: image-tag
         name: Set image tag
         run: |
@@ -58,7 +50,6 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile  # Ensure you have the correct path to Dockerfile if it's not in the root
-          labels: ${{ steps.meta.outputs.labels }}
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}:${{ env.image-tag }}
@@ -104,3 +95,22 @@ jobs:
       - name: Build
         run: |
           make build TARGETOS="$GOOS" TARGETARCH="$GOARCH" VERSION="$VERSION" BINARY_NAME="$BINARY_NAME"
+      - name: Release Notes
+        run: |
+          export VERSION=${{env.VERSION}}
+
+          git log $(git describe HEAD~ --tags --abbrev=0)..HEAD --pretty='format:* %h %s%n  * %an <%ae>' --no-merges >> .github/RELEASE_TEMPLATE.md
+          
+          curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v3.10.0/gomplate_linux-amd64
+          chmod 755 /usr/local/bin/gomplate
+          
+          gomplate --file .github/RELEASE_TEMPLATE.md --out .github/RELEASE_NOTES.md
+      - name: Release with Notes
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{env.VERSION}}
+          body_path: ".github/RELEASE_NOTES.md"
+          draft: false
+          files: ${{env.BINARY_NAME}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
