@@ -22,9 +22,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Compile Go code to create the binary
-      - name: Compile Go code
-        run: GOOS=linux GOARCH=amd64 go build -o argocd-sync main.go
+      - name: Get the version
+        run: |
+          VERSION=$(echo $GITHUB_REF | cut -d / -f 3)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -62,14 +63,63 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}:${{ env.image-tag }}
             ${{ env.REGISTRY }}/${{ github.repository }}:latest
+          platforms: linux/amd64,linux/arm64
 
-      - if: github.event_name == 'release' && github.event.action == 'published'
-        name: Build image Release (stable)
-        uses: docker/build-push-action@v3
+  release:
+    name: Create Release
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        # List of GOOS and GOARCH pairs from `go tool dist list`
+        goosarch:
+          - 'darwin/amd64'
+          - 'darwin/arm64'
+          - 'linux/amd64'
+          - 'linux/arm64'
+          - 'windows/amd64'
+          - 'windows/arm64'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
-          context: ./
-          file: ./Dockerfile  # Ensure you have the correct path to Dockerfile if it's not in the root
-          labels: ${{ steps.meta.outputs.labels }}
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}
+          fetch-depth: 0
+      - name: Get the version
+        run: |
+          VERSION=$(echo $GITHUB_REF | cut -d / -f 3)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
+      - name: Get OS and arch info
+        run: |
+          GOOSARCH=${{matrix.goosarch}}
+          GOOS=${GOOSARCH%/*}
+          GOARCH=${GOOSARCH#*/}
+          BINARY_NAME=argocd-actions-$GOOS-$GOARCH
+          VERSION=$(echo $GITHUB_REF | cut -d / -f 3)
+          echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
+          echo "GOOS=$GOOS" >> $GITHUB_ENV
+          echo "GOARCH=$GOARCH" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Build
+        run: |
+          make build TARGETOS="$GOOS" TARGETARCH="$GOARCH" VERSION="$VERSION" BINARY_NAME="$BINARY_NAME"
+      - name: Release Notes
+        run: |
+          export VERSION=${{env.VERSION}}
+
+          git log $(git describe HEAD~ --tags --abbrev=0)..HEAD --pretty='format:* %h %s%n  * %an <%ae>' --no-merges >> .github/RELEASE_TEMPLATE.md
+          
+          curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v3.10.0/gomplate_linux-amd64
+          chmod 755 /usr/local/bin/gomplate
+          
+          gomplate --file .github/RELEASE_TEMPLATE.md --out .github/RELEASE_NOTES.md
+      - name: Release with Notes
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{env.VERSION}}
+          body_path: ".github/RELEASE_NOTES.md"
+          draft: false
+          files: ${{env.BINARY_NAME}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
