@@ -47,19 +47,20 @@ func NewAPI(options *APIOptions) API {
 
 // Sync syncs given application.
 func (a API) Sync(appName string) error {
-	request := applicationpkg.ApplicationSyncRequest{
-		Name:  &appName,
-		Prune: true,
-	}
+    request := applicationpkg.ApplicationSyncRequest{
+        Name:  &appName,
+        Prune: true,
+    }
 
-	_, err := a.client.Sync(context.Background(), &request)
-	if err != nil {
-		return err
-	}
+    _, err := a.client.Sync(context.Background(), &request)
+    if err != nil {
+        // argoio.Close(a.connection)  // Close the connection here if there's an error
+        return err
+    }
 
-	defer argoio.Close(a.connection)
-
-	return nil
+    defer argoio.Close(a.connection)
+    // argoio.Close(a.connection)  // Close the connection after the sync is done
+    return nil
 }
 
 // SyncWithLabels syncs applications based on provided labels.
@@ -67,6 +68,7 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
     // 1. Fetch all applications
     listResponse, err := a.client.List(context.Background(), &applicationpkg.ApplicationQuery{})
     if err != nil {
+        argoio.Close(a.connection)  // Close the connection here if there's an error
         return nil, err
     }
 
@@ -91,17 +93,17 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
 
     // Check if no applications were synced based on labels
     if len(syncedApps) == 0 {
+        argoio.Close(a.connection)  // Close the connection here if no apps were synced
         return nil, fmt.Errorf("No applications found with matching labels: %s", labels)
     }
 
-    // Close connection
-    defer argoio.Close(a.connection)
-
     // Return errors if any
     if len(syncErrors) > 0 {
+        argoio.Close(a.connection)  // Close the connection if there were sync errors
         return syncedApps, fmt.Errorf(strings.Join(syncErrors, "; "))
     }
 
+    argoio.Close(a.connection)  // Close the connection after all operations are done
     return syncedApps, nil
 }
 
