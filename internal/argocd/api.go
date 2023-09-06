@@ -2,6 +2,7 @@ package argocd
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"strings"
 
@@ -14,8 +15,8 @@ import (
 
 // Interface is an interface for API.
 type Interface interface {
-	Sync(appName string) error
-	SyncWithLabels(labels string) error
+    Sync(appName string) error
+    SyncWithLabels(labels string) ([]*v1alpha1.Application, error)
 }
 
 // API is struct for ArgoCD api.
@@ -61,26 +62,37 @@ func (a API) Sync(appName string) error {
 }
 
 // SyncWithLabels syncs applications based on provided labels.
-func (a API) SyncWithLabels(labels string) error {
-	// 1. Fetch all applications
-	listResponse, err := a.client.List(context.Background(), &applicationpkg.ApplicationQuery{})
-	if err != nil {
-		return err
-	}
+func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
+    // 1. Fetch all applications
+    listResponse, err := a.client.List(context.Background(), &applicationpkg.ApplicationQuery{})
+    if err != nil {
+        return nil, err
+    }
 
-	// 2. Iterate through each application, check labels, and sync if it matches
-	for _, app := range listResponse.Items {
-		if matchesLabels(&app, labels) {
-			err := a.Sync(app.Name)
-			if err != nil {
-				// Decide how you want to handle individual sync errors
-				// E.g., log the error and continue, or return
-			}
-		}
-	}
+    var syncedApps []*v1alpha1.Application
+    var syncErrors []string
 
-	defer argoio.Close(a.connection)
-	return nil
+    // 2. Iterate through each application, check labels, and sync if it matches
+    for _, app := range listResponse.Items {
+        if matchesLabels(&app, labels) {
+            err := a.Sync(app.Name)
+            if err != nil {
+                syncErrors = append(syncErrors, fmt.Sprintf("Error syncing %s: %v", app.Name, err))
+                continue
+            }
+            syncedApps = append(syncedApps, &app)
+        }
+    }
+
+    // Close connection
+    defer argoio.Close(a.connection)
+
+    // Return errors if any
+    if len(syncErrors) > 0 {
+        return syncedApps, fmt.Errorf(strings.Join(syncErrors, "; "))
+    }
+
+    return syncedApps, nil
 }
 
 // matchesLabels checks if an application has the specified labels.

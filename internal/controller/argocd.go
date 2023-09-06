@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
 	"github.com/cheelim1/argocd-actions/internal/argocd"
 )
 
@@ -23,6 +24,6 @@ func (c Controller) Sync(appName string) error {
 }
 
 // SyncWithLabels syncs apps based on provided labels.
-func (c Controller) SyncWithLabels(labels string) error {
-	return c.API.SyncWithLabels(labels)  // We are assuming the API interface has a SyncWithLabels method
+func (c Controller) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
+    return c.API.SyncWithLabels(labels)
 }

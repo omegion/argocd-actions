@@ -3,6 +3,7 @@ module github.com/cheelim1/argocd-actions
 go 1.18
 
 require (
+	github.com/argoproj/argo-cd v1.8.7
 	github.com/argoproj/argo-cd/v2 v2.0.0
 	github.com/go-asset/build v0.0.1
 	github.com/golang/mock v1.6.0

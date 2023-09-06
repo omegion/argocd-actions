@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
@@ -17,29 +19,38 @@ func Sync() *cobra.Command {
 			address, _ := cmd.Flags().GetString("address")
 			token, _ := cmd.Flags().GetString("token")
 			application, _ := cmd.Flags().GetString("application")
-			labels, _ := cmd.Flags().GetString("labels")  // Capture the labels from the flag
-
+			labels, _ := cmd.Flags().GetString("labels")
+		
+			// Validation logic
+			if (application == "" && labels == "") || (application != "" && labels != "") {
+				return errors.New("You must specify either 'application' or 'labels', but not both")
+			}
+		
 			api := argocd.NewAPI(&argocd.APIOptions{
 				Address: address,
 				Token:   token,
 			})
-
+		
 			controller := ctrl.NewController(api)
+		
+			if application != "" {
+				err := controller.Sync(application)
+				if err != nil {
+					return err
+				}
+		
+				log.Infof("Application %s synced", application)
+			} else if labels != "" {
+				matchedApps, err := controller.SyncWithLabels(labels)
+				if err != nil {
+					return err
+				}
 
-			// Conditionally sync based on labels or application name
-			var err error
-			if labels != "" {
-				err = controller.SyncWithLabels(labels)  // This function needs to be implemented
-			} else {
-				err = controller.Sync(application)
+				for _, app := range matchedApps {
+					log.Infof("Application %s synced using labels", app.Name)
+				}
 			}
-
-			if err != nil {
-				return err
-			}
-
-			log.Infof("Application %s synced", application)
-
+		
 			return nil
 		},
 	}
