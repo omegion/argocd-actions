@@ -130,10 +130,8 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
     var syncedApps []*v1alpha1.Application
     var syncErrors []string
 
-    // 2. Iterate through each application and sync
+    // 2. Sync each application
     for _, app := range listResponse.Items {
-        log.Infof("Fetched app: %s with labels: %v", app.Name, app.ObjectMeta.Labels)
-
         retries := 0
         for retries < maxRetries {
             err := a.Sync(app.Name)
