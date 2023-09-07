@@ -117,8 +117,11 @@ func (a API) SyncWithRetry(appName string) error {
 
 // SyncWithLabels syncs applications based on provided labels.
 func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
-    // 1. Fetch all applications
-    listResponse, err := a.client.List(context.Background(), &applicationpkg.ApplicationQuery{})
+    // 1. Fetch applications based on labels
+    query := &applicationpkg.ApplicationQuery{
+        Selector: labels,
+    }
+    listResponse, err := a.client.List(context.Background(), query)
     if err != nil {
         argoio.Close(a.connection)  // Close the connection here if there's an error
         return nil, err
@@ -127,21 +130,28 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
     var syncedApps []*v1alpha1.Application
     var syncErrors []string
 
-    // 2. Iterate through each application, check labels, and sync if it matches
+    // 2. Iterate through each application and sync
     for _, app := range listResponse.Items {
         log.Infof("Fetched app: %s with labels: %v", app.Name, app.ObjectMeta.Labels)
 
-        if matchesLabels(&app, labels) {
-            err := a.SyncWithRetry(app.Name)
+        retries := 0
+        for retries < maxRetries {
+            err := a.Sync(app.Name)
             if err != nil {
+                if strings.Contains(err.Error(), "too_many_pings") {
+                    // Exponential backoff
+                    time.Sleep(time.Second * time.Duration(2^retries))
+                    retries++
+                    continue
+                }
                 syncErrors = append(syncErrors, fmt.Sprintf("Error syncing %s: %v", app.Name, err))
-                continue
+                break
+            } else {
+                log.Infof("Synced app %s based on labels", app.Name)
+                syncedApps = append(syncedApps, &app)
+                break
             }
-            log.Infof("Synced app %s based on labels", app.Name)
-            syncedApps = append(syncedApps, &app)
         }
-        // Introduce a delay between requests to avoid overwhelming the server
-        time.Sleep(500 * time.Millisecond)
     }
 
     // Close the gRPC connection after all sync operations are complete
@@ -159,7 +169,6 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
 
     return syncedApps, nil
 }
-
 
 func matchesLabels(app *v1alpha1.Application, labelsStr string) bool {
     pairs := strings.Split(labelsStr, ",")
