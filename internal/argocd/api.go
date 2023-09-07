@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	argocdclient "github.com/argoproj/argo-cd/v2/pkg/apiclient"
 	applicationpkg "github.com/argoproj/argo-cd/v2/pkg/apiclient/application"
@@ -45,15 +46,56 @@ func NewAPI(options *APIOptions) API {
 	return API{client: client, connection: connection}
 }
 
+func (a API) Refresh(appName string) error {
+    refreshType := "normal" // or "hard" based on your preference
+
+    // Get the current application state with refresh
+    getRequest := applicationpkg.ApplicationQuery{
+        Name:    &appName,
+        Refresh: &refreshType,
+    }
+    _, err := a.client.Get(context.Background(), &getRequest)
+    return err
+}
+
 // Sync syncs given application.
 func (a API) Sync(appName string) error {
-    request := applicationpkg.ApplicationSyncRequest{
-        Name:  &appName,
-        Prune: true,
+    maxRetries := 5
+
+    for i := 0; i < maxRetries; i++ {
+        // Refresh the application to detect latest changes
+        err := a.Refresh(appName)
+        if err != nil {
+            return err
+        }
+
+        // Sync the application
+        request := applicationpkg.ApplicationSyncRequest{
+            Name:  &appName,
+            Prune: true,
+        }
+
+        _, err = a.client.Sync(context.Background(), &request)
+        if err != nil {
+            return err
+        }
+
+        // Check if there's any diff
+        app, err := a.client.Get(context.Background(), &applicationpkg.ApplicationQuery{Name: &appName})
+        if err != nil {
+            return err
+        }
+
+        // If the application is synced (no diff), break out of the loop
+        if app.Status.Sync.Status == v1alpha1.SyncStatusCodeSynced {
+            break
+        }
+
+        // If not, wait for a short duration before retrying
+        time.Sleep(10 * time.Second)
     }
 
-    _, err := a.client.Sync(context.Background(), &request)
-    return err  // Just return the error, don't close the connection here
+    return nil
 }
 
 // SyncWithLabels syncs applications based on provided labels.
@@ -73,12 +115,33 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
         log.Infof("Fetched app: %s with labels: %v", app.Name, app.ObjectMeta.Labels)
 
         if matchesLabels(&app, labels) {
-            err := a.Sync(app.Name)
-            if err != nil {
-                syncErrors = append(syncErrors, fmt.Sprintf("Error syncing %s: %v", app.Name, err))
-                continue
+            // Refresh and retry sync logic
+            maxRetries := 5
+            for i := 0; i < maxRetries; i++ {
+                err := a.Refresh(app.Name)
+                if err != nil {
+                    syncErrors = append(syncErrors, fmt.Sprintf("Error refreshing %s: %v", app.Name, err))
+                    break
+                }
+
+                // Check for differences (you might need to implement this)
+                hasDifferences, err := a.HasDifferences(app.Name)
+                if err != nil {
+                    syncErrors = append(syncErrors, fmt.Sprintf("Error checking differences for %s: %v", app.Name, err))
+                    break
+                }
+
+                if !hasDifferences {
+                    break
+                }
+
+                err = a.Sync(app.Name)
+                if err != nil {
+                    syncErrors = append(syncErrors, fmt.Sprintf("Error syncing %s: %v", app.Name, err))
+                    continue
+                }
+                log.Infof("Synced app %s based on labels", app.Name)
             }
-            log.Infof("Synced app %s based on labels", app.Name)
             syncedApps = append(syncedApps, &app)
         }
     }
@@ -157,3 +220,20 @@ func matchesLabels(app *v1alpha1.Application, labelsStr string) bool {
     return true
 }
 
+// HasDifferences checks if the given application has differences between the desired and live state.
+func (a API) HasDifferences(appName string) (bool, error) {
+    // Get the application details
+    appResponse, err := a.client.Get(context.Background(), &applicationpkg.ApplicationQuery{
+        Name: &appName,
+    })
+    if err != nil {
+        return false, fmt.Errorf("Error fetching application %s: %v", appName, err)
+    }
+
+    // Check the application's sync status
+    if appResponse.Status.Sync.Status == v1alpha1.SyncStatusCodeOutOfSync {
+        return true, nil
+    }
+
+    return false, nil
+}
