@@ -9,7 +9,7 @@ import (
 	argocdclient "github.com/argoproj/argo-cd/v2/pkg/apiclient"
 	applicationpkg "github.com/argoproj/argo-cd/v2/pkg/apiclient/application"
 	"github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
-	"google.golang.org/appengine/log"
+	log "github.com/sirupsen/logrus"
 
 	argoio "github.com/argoproj/argo-cd/v2/util/io"
 )
@@ -58,7 +58,7 @@ func (a API) Sync(appName string) error {
         return err
     }
 
-    defer argoio.Close(a.connection)
+    defer argoio.Close(a.connection) //if uncomment argoio.Close(a.connection then comment this out.
     // argoio.Close(a.connection)  // Close the connection after the sync is done
     return nil
 }
@@ -77,8 +77,7 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
 
     // 2. Iterate through each application, check labels, and sync if it matches
     for _, app := range listResponse.Items {
-        ctx := context.Background()
-        log.Infof(ctx, "Fetched app: %s with labels: %v", app.Name, app.ObjectMeta.Labels)
+        log.Infof("Fetched app: %s with labels: %v", app.Name, app.ObjectMeta.Labels)
 
         if matchesLabels(&app, labels) {
             err := a.Sync(app.Name)
@@ -86,7 +85,7 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
                 syncErrors = append(syncErrors, fmt.Sprintf("Error syncing %s: %v", app.Name, err))
                 continue
             }
-            log.Infof(ctx, "Synced app %s based on labels", app.Name)
+            log.Infof("Synced app %s based on labels", app.Name)
             syncedApps = append(syncedApps, &app)
         }
     }

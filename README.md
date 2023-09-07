@@ -36,9 +36,10 @@ jobs:
 | `address` | ArgoCD server address.                 |
 | `token`   | ArgoCD Token.                          |
 | `action`  | ArgoCD Action i.e. sync.               |
-| `application` | Application name to execute action on. |
-
-**Optional** Labels to sync the ArgoCD app with. If provided, the action will sync the app based on these labels, instead of the app name.
+| `application` | Application name to execute action on. [Optional] |
+| `labels` | ArgoCD app to sync based on labels. [Optional] |
+**Note** 
+Have to either pass in application OR labels. 1 is required.
 
 ## Examples
 
