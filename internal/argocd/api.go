@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"math"
 	"strings"
 	"time"
 
@@ -14,6 +15,8 @@ import (
 
 	argoio "github.com/argoproj/argo-cd/v2/util/io"
 )
+
+const maxRetries = 5
 
 // Interface is an interface for API.
 type Interface interface {
@@ -98,6 +101,20 @@ func (a API) Sync(appName string) error {
     return nil
 }
 
+// Introduce a retry mechanism with exponential backoff
+func (a API) SyncWithRetry(appName string) error {
+    var err error
+    for i := 0; i < maxRetries; i++ {
+        err = a.Sync(appName)
+        if err == nil {
+            return nil
+        }
+        // Exponential backoff: 2^i * 100ms. For i=0,1,2,... this results in 100ms, 200ms, 400ms, ...
+        time.Sleep(time.Duration(math.Pow(2, float64(i))) * 100 * time.Millisecond)
+    }
+    return err
+}
+
 // SyncWithLabels syncs applications based on provided labels.
 func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
     // 1. Fetch all applications
@@ -115,35 +132,16 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
         log.Infof("Fetched app: %s with labels: %v", app.Name, app.ObjectMeta.Labels)
 
         if matchesLabels(&app, labels) {
-            // Refresh and retry sync logic
-            maxRetries := 5
-            for i := 0; i < maxRetries; i++ {
-                err := a.Refresh(app.Name)
-                if err != nil {
-                    syncErrors = append(syncErrors, fmt.Sprintf("Error refreshing %s: %v", app.Name, err))
-                    break
-                }
-
-                // Check for differences (you might need to implement this)
-                hasDifferences, err := a.HasDifferences(app.Name)
-                if err != nil {
-                    syncErrors = append(syncErrors, fmt.Sprintf("Error checking differences for %s: %v", app.Name, err))
-                    break
-                }
-
-                if !hasDifferences {
-                    break
-                }
-
-                err = a.Sync(app.Name)
-                if err != nil {
-                    syncErrors = append(syncErrors, fmt.Sprintf("Error syncing %s: %v", app.Name, err))
-                    continue
-                }
-                log.Infof("Synced app %s based on labels", app.Name)
+            err := a.SyncWithRetry(app.Name)
+            if err != nil {
+                syncErrors = append(syncErrors, fmt.Sprintf("Error syncing %s: %v", app.Name, err))
+                continue
             }
+            log.Infof("Synced app %s based on labels", app.Name)
             syncedApps = append(syncedApps, &app)
         }
+        // Introduce a delay between requests to avoid overwhelming the server
+        time.Sleep(500 * time.Millisecond)
     }
 
     // Close the gRPC connection after all sync operations are complete
@@ -161,6 +159,7 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
 
     return syncedApps, nil
 }
+
 
 func matchesLabels(app *v1alpha1.Application, labelsStr string) bool {
     pairs := strings.Split(labelsStr, ",")
