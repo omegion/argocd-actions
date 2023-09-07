@@ -53,14 +53,7 @@ func (a API) Sync(appName string) error {
     }
 
     _, err := a.client.Sync(context.Background(), &request)
-    if err != nil {
-        // argoio.Close(a.connection)  // Close the connection here if there's an error
-        return err
-    }
-
-    defer argoio.Close(a.connection) //if uncomment argoio.Close(a.connection then comment this out.
-    // argoio.Close(a.connection)  // Close the connection after the sync is done
-    return nil
+    return err  // Just return the error, don't close the connection here
 }
 
 // SyncWithLabels syncs applications based on provided labels.
@@ -90,19 +83,19 @@ func (a API) SyncWithLabels(labels string) ([]*v1alpha1.Application, error) {
         }
     }
 
+    // Close the gRPC connection after all sync operations are complete
+    defer argoio.Close(a.connection)
+
     // Check if no applications were synced based on labels
     if len(syncedApps) == 0 {
-        argoio.Close(a.connection)  // Close the connection here if no apps were synced
         return nil, fmt.Errorf("No applications found with matching labels: %s", labels)
     }
 
     // Return errors if any
     if len(syncErrors) > 0 {
-        argoio.Close(a.connection)  // Close the connection if there were sync errors
         return syncedApps, fmt.Errorf(strings.Join(syncErrors, "; "))
     }
 
-    argoio.Close(a.connection)  // Close the connection after all operations are done
     return syncedApps, nil
 }
 

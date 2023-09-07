@@ -19,9 +19,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Sync ArgoCD Application
-        uses: cheelim1/argocd-actions@v1
+        uses: cheelim1/argocd-actions@v0.1.11-alpha
         with:
           address: "argocd.example.com"
           token: ${{ secrets.ARGOCD_TOKEN }}
@@ -54,11 +54,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Sync ArgoCD Application
-        uses: cheelim1/argocd-actions@master
+        uses: cheelim1/argocd-actions@v0.1.11-alpha
         with:
-          address: "vault.example.com"
+          address: "argocd.example.com"
           token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
           application: "my-example-app"
@@ -72,21 +72,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Sync ArgoCD Application
-        uses: cheelim1/argocd-actions@master
+        uses: cheelim1/argocd-actions@v0.1.11-alpha
         with:
-          address: "vault.example.com"
+          address: "argocd.example.com"
           token: ${{ secrets.ARGOCD_TOKEN }}
           action: sync
-          labels: "env=production,team=myteam" # Replace with your label key-value pairs
+          labels: "env=production,team=myteam" # Replace with your ArgoCD App label key-value pairs.
 ```
 
 ## Publishing
-
-To publish a new version of this Action we need to update the Docker image tag in `action.yml` and also create a new
-release on GitHub.
-
-- Work out the next tag version number.
-- Update the Docker image in `action.yml`.
-- Create a new release on GitHub with the same tag.
+Create a new release & bump up the version tag.
